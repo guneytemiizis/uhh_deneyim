@@ -30,83 +30,105 @@
     }
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
     line-height: 1.6;
+    padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+    min-height: 100vh;
   }
 
-  /* Üst sekmeler */
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  /* Ana sayfa */
+  .home { max-width: 900px; margin: 0 auto; padding: 36px 18px 60px; }
+  .home header { text-align: center; margin-bottom: 28px; }
+  .home h1 { font-size: 1.5rem; color: var(--accent); margin: 0 0 6px; }
+  .home header p { margin: 0; color: var(--muted); }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .card {
     background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding-top: env(safe-area-inset-top, 0px);
-  }
-  .topbar-inner {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 12px 12px 0;
-  }
-  .brand {
-    font-weight: 700;
-    color: var(--accent);
-    font-size: 1rem;
-    margin: 0 0 8px;
-  }
-  .tabs {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px 18px;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: var(--text);
     display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
   }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex: 0 0 auto;
-    text-decoration: none;
-    color: var(--muted);
-    padding: 10px 14px;
-    font-size: 0.92rem;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
-  }
-  .tab:hover { color: var(--accent); }
-  .tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-    font-weight: 600;
-  }
+  .card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 6px 18px rgba(14,107,140,.12); }
+  .card:active { transform: scale(0.98); }
+  .card .icon { font-size: 1.8rem; line-height: 1; }
+  .card h2 { font-size: 1.05rem; color: var(--accent); margin: 0; }
+  .card .more { margin-top: auto; font-size: 0.85rem; color: var(--muted); }
 
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 8px 16px 60px;
+  /* Pop-up */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 20, 28, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 100;
   }
-  section.block {
-    scroll-margin-top: 110px;
-    padding: 32px 0 8px;
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    color: var(--text);
+    width: 100%;
+    max-width: 640px;
+    max-height: 88vh;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px;
     border-bottom: 1px solid var(--border);
   }
-  section.block:last-of-type { border-bottom: none; }
-  section.block h2 {
+  .modal-head h2 { margin: 0; font-size: 1.2rem; color: var(--accent); }
+  .close {
+    background: var(--accent-soft);
     color: var(--accent);
-    font-size: 1.4rem;
-    margin: 0 0 12px;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    flex: 0 0 auto;
   }
-  section.block p { margin: 0 0 12px; }
-  section.block ul { padding-left: 20px; margin: 0 0 12px; }
-  section.block li { margin-bottom: 6px; }
+  .modal-body {
+    padding: 18px 20px 24px;
+    overflow-y: auto;
+  }
+  .modal-body p { margin: 0 0 12px; }
+  .modal-body ul { padding-left: 20px; margin: 0; }
+  .modal-body li { margin-bottom: 8px; }
   .placeholder { color: var(--muted); font-style: italic; }
 
   /* Çeviri programı */
-  .wrap { max-width: 640px; margin: 0 auto; }
-  .intro-tr { color: var(--muted); font-size: 0.95rem; margin-bottom: 14px; }
+  .intro-tr { color: var(--muted); font-size: 0.95rem; margin: 0 0 14px; }
   .lang-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -139,11 +161,10 @@
 
   .panel {
     margin-top: 18px;
-    background: var(--surface);
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 18px 16px 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    border-radius: 16px;
+    padding: 16px 14px 8px;
   }
   .panel-head {
     display: flex;
@@ -153,7 +174,7 @@
     margin-bottom: 6px;
     flex-wrap: wrap;
   }
-  .panel-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; color: var(--accent); }
+  .panel-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--accent); }
   .panel-title .flag { font-size: 1.5rem; }
   .all-btn {
     background: var(--play);
@@ -181,13 +202,13 @@
   .phrase-tr-meaning {
     margin-top: 6px;
     font-size: 0.95rem;
-    color: var(--text);
     background: var(--accent-soft);
     border-radius: 8px;
     padding: 6px 10px;
     display: inline-block;
   }
   .phrase-tr-meaning b { color: var(--accent); font-weight: 600; margin-right: 4px; }
+  .gt-link { display: inline-block; margin-top: 8px; font-size: 0.85rem; color: var(--accent); text-decoration: none; }
 
   .play {
     flex: 0 0 auto;
@@ -210,6 +231,7 @@
     0% { box-shadow: 0 0 0 0 rgba(217,130,43,.5); }
     100% { box-shadow: 0 0 0 14px rgba(217,130,43,0); }
   }
+  .rtl { direction: rtl; text-align: right; }
 
   .notice {
     margin-top: 14px;
@@ -225,83 +247,116 @@
     padding: 10px 12px;
     font-size: 1rem;
   }
-  .hint {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: 22px;
-  }
-  .rtl { direction: rtl; text-align: right; }
-  .hidden { display: none; }
-  .gt-link { display: inline-block; margin-top: 8px; font-size: 0.85rem; color: var(--accent); text-decoration: none; }
+  .hint { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 18px 0 0; }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <div class="topbar-inner">
-    <p class="brand">Uluslararası Hasta Deneyimi Ekibi</p>
-    <nav class="tabs" id="tabs" aria-label="Sayfa bölümleri">
-      <a class="tab" href="#hakkimizda">Hakkımızda</a>
-      <a class="tab" href="#neler-yapiyoruz">Neler Yapıyoruz</a>
-      <a class="tab" href="#misyon-vizyon">Misyon ve Vizyon</a>
-      <a class="tab" href="#gorev-tanimi">Görev Tanımı</a>
-      <a class="tab" href="#ceviri">Çeviri Programı</a>
-    </nav>
+<main class="home">
+  <header>
+    <h1>Uluslararası Hasta Deneyimi Ekibi</h1>
+    <p>Bir başlığa dokunarak detayları görün</p>
+  </header>
+
+  <div class="cards">
+    <button class="card" data-modal="hakkimizda">
+      <span class="icon">🏥</span>
+      <h2>Hakkımızda</h2>
+      <span class="more">Detayları aç →</span>
+    </button>
+    <button class="card" data-modal="neler">
+      <span class="icon">🤝</span>
+      <h2>Neler Yapıyoruz</h2>
+      <span class="more">Detayları aç →</span>
+    </button>
+    <button class="card" data-modal="misyon">
+      <span class="icon">🎯</span>
+      <h2>Misyon ve Vizyon</h2>
+      <span class="more">Detayları aç →</span>
+    </button>
+    <button class="card" data-modal="gorev">
+      <span class="icon">📋</span>
+      <h2>Görev Tanımı</h2>
+      <span class="more">Detayları aç →</span>
+    </button>
+    <button class="card" data-modal="ceviri">
+      <span class="icon">🔊</span>
+      <h2>Çeviri Programı</h2>
+      <span class="more">Detayları aç →</span>
+    </button>
   </div>
-</header>
-
-<main>
-
-  <section class="block" id="hakkimizda">
-    <h2>Hakkımızda</h2>
-    <p class="placeholder">[Ekibinizin kim olduğunu, hangi hastane biriminde çalıştığını ve yabancı hastalara ne tür bir destek sunduğunu anlatan kısa bir yazı buraya gelecek.]</p>
-  </section>
-
-  <section class="block" id="neler-yapiyoruz">
-    <h2>Neler Yapıyoruz</h2>
-    <ul>
-      <li class="placeholder">[Hizmet 1: örneğin hasta karşılama ve ön görüşme]</li>
-      <li class="placeholder">[Hizmet 2: örneğin sigorta ve ödeme süreçleri takibi]</li>
-      <li class="placeholder">[Hizmet 3: örneğin konaklama ve ulaşım koordinasyonu]</li>
-    </ul>
-  </section>
-
-  <section class="block" id="misyon-vizyon">
-    <h2>Misyon ve Vizyon</h2>
-    <p><strong>Misyonumuz:</strong> <span class="placeholder">[Misyon metni buraya gelecek.]</span></p>
-    <p><strong>Vizyonumuz:</strong> <span class="placeholder">[Vizyon metni buraya gelecek.]</span></p>
-  </section>
-
-  <section class="block" id="gorev-tanimi">
-    <h2>Görev Tanımı</h2>
-    <p class="placeholder">[Ekibin görev ve sorumluluklarını, kimlerle çalıştığını ve hangi süreçlerden sorumlu olduğunu buraya yazın.]</p>
-  </section>
-
-  <section class="block" id="ceviri">
-    <h2>Çeviri Programı</h2>
-    <div class="wrap">
-      <p class="intro-tr">Dilinizi seçin · Select your language</p>
-
-      <div class="lang-grid" id="langGrid" role="group" aria-label="Dil seçimi"></div>
-
-      <section class="panel hidden" id="panel" aria-live="polite">
-        <div class="panel-head">
-          <div class="panel-title">
-            <span class="flag" id="pFlag"></span>
-            <span id="pName"></span>
-          </div>
-          <button class="all-btn" id="allBtn">▶ Hepsini dinle</button>
-        </div>
-        <div id="phrases"></div>
-      </section>
-
-      <p class="notice" id="notice"></p>
-      <p class="hint" id="hint">Bir dil seçerek başlayın. Sesi dinlemek için ▶ tuşuna dokunun.</p>
-    </div>
-  </section>
-
 </main>
+
+<!-- Pop-up pencere -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle"></h2>
+      <button class="close" id="closeBtn" aria-label="Kapat">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- İçerik şablonları -->
+<template id="tpl-hakkimizda">
+  <p>Uluslararası Hasta Hizmetleri Deneyim ekibi olarak yatan hastalarımızı günlük olarak ziyaret ediyor, memnuniyetlerini sağlamak adına hastalarımızla samimi iletişim kurarak yaşanabilecek beklenmedik durumları çözümlemeye çalışıyoruz.</p>
+</template>
+
+<template id="tpl-neler">
+  <ul>
+    <li>Hasta geri bildirimi için sisteme yönlendirebilme</li>
+    <li>Aktif dinleme ve beklenti yönetimi</li>
+    <li>Kriz yönetimi ve çözüm odaklılık</li>
+    <li>Proaktif ve bütüncül takip</li>
+    <li>Güven ve profesyonellik sergilemek</li>
+    <li>Koordine olmak</li>
+    <li>Kültürel duyarlılık ve empati kurmak</li>
+    <li>Geri bildirim ve itiraz yönetimi</li>
+    <li>Sahada "ortaklık" hissi</li>
+    <li>Açık aramak değil, çözüm odaklı olmak</li>
+  </ul>
+</template>
+
+<template id="tpl-misyon">
+  <ul>
+    <li>Güven</li>
+    <li>Mahremiyet</li>
+    <li>Tarafsızlık</li>
+    <li>Memnuniyet</li>
+    <li>Kültürel farklılık analizi</li>
+    <li>İşbirliği</li>
+    <li>İnovasyon</li>
+  </ul>
+</template>
+
+<template id="tpl-gorev">
+  <ul>
+    <li>Günlük hasta ziyaretlerini gerçekleştirmek</li>
+    <li>Yatan hastaların memnuniyetini ve şikayet durumlarını takip etmek</li>
+    <li>Gerektiğinde eksik kalınan yerlerde sorunları ilgili birimlere bildirmek</li>
+    <li>Hasta deneyimini iyileştirmek adına yeni fikirleri ortaya çıkarabilmek için iyi bir gözlemci olmak</li>
+    <li>Gerekli verileri sisteme kayıt etmek ve gün sonu raporlamak</li>
+  </ul>
+</template>
+
+<template id="tpl-ceviri">
+  <p class="intro-tr">Dilinizi seçin · Select your language</p>
+  <div class="lang-grid" data-role="grid"></div>
+  <section class="panel hidden" data-role="panel" aria-live="polite">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="flag" data-role="pFlag"></span>
+        <span data-role="pName"></span>
+      </div>
+      <button class="all-btn" data-role="allBtn">▶ Hepsini dinle</button>
+    </div>
+    <div data-role="phrases"></div>
+  </section>
+  <p class="notice" data-role="notice"></p>
+  <p class="hint" data-role="hint">Bir dil seçerek başlayın. Sesi dinlemek için ▶ tuşuna dokunun.</p>
+</template>
 
 <script>
   const LANGS = [
@@ -377,7 +432,6 @@
     ]}
   ];
 
-  // Türkçe anlamlar (sıra, her dilin ifadeleriyle eşleşir)
   const TR_MEANINGS = [
     "Merhaba",
     "Nasıl hissediyorsunuz?",
@@ -386,19 +440,30 @@
     "Hoşça kalın"
   ];
 
-  const grid = document.getElementById("langGrid");
-  const panel = document.getElementById("panel");
-  const phrasesEl = document.getElementById("phrases");
-  const notice = document.getElementById("notice");
-  const hint = document.getElementById("hint");
-  const allBtn = document.getElementById("allBtn");
+  const TITLES = {
+    hakkimizda: "Hakkımızda",
+    neler: "Neler Yapıyoruz",
+    misyon: "Misyon ve Vizyon",
+    gorev: "Görev Tanımı",
+    ceviri: "Çeviri Programı"
+  };
+
+  const overlay = document.getElementById("overlay");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBody");
+  const closeBtn = document.getElementById("closeBtn");
+  let lastFocus = null;
+
+  // ----- Çeviri programı durumu (açık pencere içindeki öğelere bağlı) -----
+  let ui = null;   // { grid, panel, pFlag, pName, phrases, allBtn, notice, hint }
   let current = null;
   let queue = null;
   let playButtons = [];
 
   function setNotice(msg, warn) {
-    notice.textContent = msg || "";
-    notice.classList.toggle("warn", !!warn);
+    if (!ui) return;
+    ui.notice.textContent = msg || "";
+    ui.notice.classList.toggle("warn", !!warn);
   }
 
   function pickVoice(lang) {
@@ -441,22 +506,27 @@
     playButtons.forEach(b => setSpeakingState(b, false));
   }
 
+  function stopSpeech() {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    queue = null;
+    resetPlayButtons();
+  }
+
   function renderLanguage(lang) {
     current = lang;
-    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    queue = null;
-    allBtn.disabled = false;
-    allBtn.textContent = "▶ Hepsini dinle";
+    stopSpeech();
+    ui.allBtn.disabled = false;
+    ui.allBtn.textContent = "▶ Hepsini dinle";
     setNotice("");
 
-    document.querySelectorAll(".lang-btn").forEach(b => {
+    ui.grid.querySelectorAll(".lang-btn").forEach(b => {
       b.setAttribute("aria-pressed", b.dataset.code === lang.code ? "true" : "false");
     });
 
-    document.getElementById("pFlag").textContent = lang.flag;
-    document.getElementById("pName").textContent = lang.name;
+    ui.pFlag.textContent = lang.flag;
+    ui.pName.textContent = lang.name;
 
-    phrasesEl.innerHTML = "";
+    ui.phrases.innerHTML = "";
     playButtons = [];
     lang.phrases.forEach((p, i) => {
       const row = document.createElement("div");
@@ -491,13 +561,10 @@
       btn.setAttribute("aria-label", "Dinle: " + p.t);
       btn.addEventListener("click", () => {
         if (btn.classList.contains("speaking")) {
-          speechSynthesis.cancel();
-          queue = null;
-          resetPlayButtons();
+          stopSpeech();
           return;
         }
-        queue = null;
-        resetPlayButtons();
+        stopSpeech();
         setSpeakingState(btn, true);
         speak(p.t, lang.voice, () => setSpeakingState(btn, false));
       });
@@ -514,33 +581,30 @@
 
       row.appendChild(body);
       row.appendChild(btn);
-      phrasesEl.appendChild(row);
+      ui.phrases.appendChild(row);
     });
 
-    panel.classList.remove("hidden");
-    hint.classList.add("hidden");
-    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    ui.panel.classList.remove("hidden");
+    ui.hint.classList.add("hidden");
   }
 
   function playAll() {
     if (!current) return;
     if (queue) {
-      speechSynthesis.cancel();
-      queue = null;
-      resetPlayButtons();
-      allBtn.textContent = "▶ Hepsini dinle";
+      stopSpeech();
+      ui.allBtn.textContent = "▶ Hepsini dinle";
       return;
     }
     const lang = current;
     let i = 0;
     queue = true;
-    allBtn.textContent = "■ Durdur";
+    ui.allBtn.textContent = "■ Durdur";
     const next = () => {
       if (!queue) return;
       resetPlayButtons();
       if (i >= lang.phrases.length) {
         queue = null;
-        allBtn.textContent = "▶ Hepsini dinle";
+        ui.allBtn.textContent = "▶ Hepsini dinle";
         return;
       }
       const idx = i++;
@@ -553,47 +617,87 @@
     next();
   }
 
-  LANGS.forEach(lang => {
-    const b = document.createElement("button");
-    b.className = "lang-btn";
-    b.dataset.code = lang.code;
-    b.setAttribute("aria-pressed", "false");
-    const f = document.createElement("span");
-    f.className = "flag";
-    f.textContent = lang.flag;
-    const n = document.createElement("span");
-    n.className = "lname";
-    n.textContent = lang.name;
-    b.appendChild(f);
-    b.appendChild(n);
-    b.addEventListener("click", () => {
-      try { renderLanguage(lang); }
-      catch (err) { setNotice("Bir hata oluştu, lütfen sayfayı yenileyin.", true); console.error(err); }
+  // Çeviri şablonunu pencere içine kur
+  function buildTranslation(container) {
+    const grid = container.querySelector('[data-role="grid"]');
+    LANGS.forEach(lang => {
+      const b = document.createElement("button");
+      b.className = "lang-btn";
+      b.dataset.code = lang.code;
+      b.setAttribute("aria-pressed", "false");
+      const f = document.createElement("span");
+      f.className = "flag";
+      f.textContent = lang.flag;
+      const n = document.createElement("span");
+      n.className = "lname";
+      n.textContent = lang.name;
+      b.appendChild(f);
+      b.appendChild(n);
+      b.addEventListener("click", () => {
+        try { renderLanguage(lang); }
+        catch (err) { setNotice("Bir hata oluştu, lütfen sayfayı yenileyin.", true); console.error(err); }
+      });
+      grid.appendChild(b);
     });
-    grid.appendChild(b);
-  });
 
-  allBtn.addEventListener("click", playAll);
+    ui = {
+      grid,
+      panel: container.querySelector('[data-role="panel"]'),
+      pFlag: container.querySelector('[data-role="pFlag"]'),
+      pName: container.querySelector('[data-role="pName"]'),
+      phrases: container.querySelector('[data-role="phrases"]'),
+      allBtn: container.querySelector('[data-role="allBtn"]'),
+      notice: container.querySelector('[data-role="notice"]'),
+      hint: container.querySelector('[data-role="hint"]')
+    };
+    ui.allBtn.addEventListener("click", playAll);
+    current = null;
+    queue = null;
+    playButtons = [];
+  }
+
+  // ----- Pop-up aç / kapat -----
+  function openModal(key) {
+    lastFocus = document.activeElement;
+    modalTitle.textContent = TITLES[key];
+    modalBody.innerHTML = "";
+    const tpl = document.getElementById("tpl-" + key);
+    modalBody.appendChild(tpl.content.cloneNode(true));
+
+    if (key === "ceviri") {
+      buildTranslation(modalBody);
+    }
+
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    stopSpeech();
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    modalBody.innerHTML = "";
+    ui = null;
+    if (lastFocus) lastFocus.focus();
+  }
+
+  document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => openModal(card.dataset.modal));
+  });
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && overlay.classList.contains("open")) closeModal();
+  });
 
   // Bazı tarayıcılarda ses listesi geç yüklenir
   if ("speechSynthesis" in window) {
     speechSynthesis.onvoiceschanged = () => {};
     speechSynthesis.getVoices();
   }
-
-  // Kaydırdıkça aktif sekmeyi değiştir
-  const tabLinks = document.querySelectorAll(".tab");
-  const sections = document.querySelectorAll("section.block");
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        tabLinks.forEach(a => {
-          a.classList.toggle("active", a.getAttribute("href") === "#" + entry.target.id);
-        });
-      }
-    });
-  }, { rootMargin: "-40% 0px -55% 0px" });
-  sections.forEach(s => observer.observe(s));
 </script>
 </body>
 </html>
