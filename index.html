@@ -30,20 +30,83 @@
     }
   }
   * { box-sizing: border-box; }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-    padding: env(safe-area-inset-top, 0px) 12px env(safe-area-inset-bottom, 0px);
-    min-height: 100vh;
+    line-height: 1.6;
   }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 20px 4px 40px; }
-  header { text-align: center; margin-bottom: 18px; }
-  header h1 { font-size: 1.35rem; margin: 0 0 6px; color: var(--accent); }
-  header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
 
+  /* Üst sekmeler */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .topbar-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 12px 12px 0;
+  }
+  .brand {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1rem;
+    margin: 0 0 8px;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto;
+    text-decoration: none;
+    color: var(--muted);
+    padding: 10px 14px;
+    font-size: 0.92rem;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--accent); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 8px 16px 60px;
+  }
+  section.block {
+    scroll-margin-top: 110px;
+    padding: 32px 0 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  section.block:last-of-type { border-bottom: none; }
+  section.block h2 {
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin: 0 0 12px;
+  }
+  section.block p { margin: 0 0 12px; }
+  section.block ul { padding-left: 20px; margin: 0 0 12px; }
+  section.block li { margin-bottom: 6px; }
+  .placeholder { color: var(--muted); font-style: italic; }
+
+  /* Çeviri programı */
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .intro-tr { color: var(--muted); font-size: 0.95rem; margin-bottom: 14px; }
   .lang-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -174,28 +237,71 @@
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Uluslararası Hasta Deneyimi Ekibi</h1>
-    <p>Dilinizi seçin · Select your language</p>
-  </header>
 
-  <div class="lang-grid" id="langGrid" role="group" aria-label="Dil seçimi"></div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <p class="brand">Uluslararası Hasta Deneyimi Ekibi</p>
+    <nav class="tabs" id="tabs" aria-label="Sayfa bölümleri">
+      <a class="tab" href="#hakkimizda">Hakkımızda</a>
+      <a class="tab" href="#neler-yapiyoruz">Neler Yapıyoruz</a>
+      <a class="tab" href="#misyon-vizyon">Misyon ve Vizyon</a>
+      <a class="tab" href="#gorev-tanimi">Görev Tanımı</a>
+      <a class="tab" href="#ceviri">Çeviri Programı</a>
+    </nav>
+  </div>
+</header>
 
-  <section class="panel hidden" id="panel" aria-live="polite">
-    <div class="panel-head">
-      <div class="panel-title">
-        <span class="flag" id="pFlag"></span>
-        <span id="pName"></span>
-      </div>
-      <button class="all-btn" id="allBtn">▶ Hepsini dinle</button>
-    </div>
-    <div id="phrases"></div>
+<main>
+
+  <section class="block" id="hakkimizda">
+    <h2>Hakkımızda</h2>
+    <p class="placeholder">[Ekibinizin kim olduğunu, hangi hastane biriminde çalıştığını ve yabancı hastalara ne tür bir destek sunduğunu anlatan kısa bir yazı buraya gelecek.]</p>
   </section>
 
-  <p class="notice" id="notice"></p>
-  <p class="hint" id="hint">Bir dil seçerek başlayın. Sesi dinlemek için ▶ tuşuna dokunun.</p>
-</div>
+  <section class="block" id="neler-yapiyoruz">
+    <h2>Neler Yapıyoruz</h2>
+    <ul>
+      <li class="placeholder">[Hizmet 1: örneğin hasta karşılama ve ön görüşme]</li>
+      <li class="placeholder">[Hizmet 2: örneğin sigorta ve ödeme süreçleri takibi]</li>
+      <li class="placeholder">[Hizmet 3: örneğin konaklama ve ulaşım koordinasyonu]</li>
+    </ul>
+  </section>
+
+  <section class="block" id="misyon-vizyon">
+    <h2>Misyon ve Vizyon</h2>
+    <p><strong>Misyonumuz:</strong> <span class="placeholder">[Misyon metni buraya gelecek.]</span></p>
+    <p><strong>Vizyonumuz:</strong> <span class="placeholder">[Vizyon metni buraya gelecek.]</span></p>
+  </section>
+
+  <section class="block" id="gorev-tanimi">
+    <h2>Görev Tanımı</h2>
+    <p class="placeholder">[Ekibin görev ve sorumluluklarını, kimlerle çalıştığını ve hangi süreçlerden sorumlu olduğunu buraya yazın.]</p>
+  </section>
+
+  <section class="block" id="ceviri">
+    <h2>Çeviri Programı</h2>
+    <div class="wrap">
+      <p class="intro-tr">Dilinizi seçin · Select your language</p>
+
+      <div class="lang-grid" id="langGrid" role="group" aria-label="Dil seçimi"></div>
+
+      <section class="panel hidden" id="panel" aria-live="polite">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="flag" id="pFlag"></span>
+            <span id="pName"></span>
+          </div>
+          <button class="all-btn" id="allBtn">▶ Hepsini dinle</button>
+        </div>
+        <div id="phrases"></div>
+      </section>
+
+      <p class="notice" id="notice"></p>
+      <p class="hint" id="hint">Bir dil seçerek başlayın. Sesi dinlemek için ▶ tuşuna dokunun.</p>
+    </div>
+  </section>
+
+</main>
 
 <script>
   const LANGS = [
@@ -305,7 +411,7 @@
 
   function speak(text, lang, onEnd) {
     if (!("speechSynthesis" in window)) {
-      setNotice("Bu cihaz sesli okumayı desteklemiyor. Ifadeyi yukarıdaki metinden okuyabilirsiniz.", true);
+      setNotice("Bu cihaz sesli okumayı desteklemiyor. İfadeyi yukarıdaki metinden okuyabilirsiniz.", true);
       if (onEnd) onEnd();
       return;
     }
@@ -474,6 +580,20 @@
     speechSynthesis.onvoiceschanged = () => {};
     speechSynthesis.getVoices();
   }
+
+  // Kaydırdıkça aktif sekmeyi değiştir
+  const tabLinks = document.querySelectorAll(".tab");
+  const sections = document.querySelectorAll("section.block");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tabLinks.forEach(a => {
+          a.classList.toggle("active", a.getAttribute("href") === "#" + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: "-40% 0px -55% 0px" });
+  sections.forEach(s => observer.observe(s));
 </script>
 </body>
 </html>
