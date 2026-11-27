@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uluslararası Hasta Deneyimi Ekibi</title>
+<style>
+  :root {
+    --bg: #f3f7fa;
+    --surface: #ffffff;
+    --border: #d5e1ea;
+    --text: #1d2b36;
+    --muted: #6b7f8e;
+    --accent: #0e6b8c;
+    --accent-soft: #e2f1f7;
+    --play: #0e6b8c;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101a22;
+      --surface: #182630;
+      --border: #2a3d4a;
+      --text: #e6eef4;
+      --muted: #8fa3b1;
+      --accent: #5cc2e3;
+      --accent-soft: #1d3a48;
+      --play: #2aa6cc;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    padding: env(safe-area-inset-top, 0px) 12px env(safe-area-inset-bottom, 0px);
+    min-height: 100vh;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 20px 4px 40px; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 1.35rem; margin: 0 0 6px; color: var(--accent); }
+  header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .lang-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 6px 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font: inherit;
+    color: var(--muted);
+    transition: transform .08s ease, border-color .15s ease, background .15s ease;
+  }
+  .lang-btn:hover { border-color: var(--accent); }
+  .lang-btn:active { transform: scale(0.97); }
+  .lang-btn .flag { font-size: 1.9rem; line-height: 1; }
+  .lang-btn .lname { font-size: 0.9rem; text-align: center; }
+  .lang-btn[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .panel {
+    margin-top: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 16px 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .panel-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.15rem; color: var(--accent); }
+  .panel-title .flag { font-size: 1.5rem; }
+  .all-btn {
+    background: var(--play);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 9px 16px;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .all-btn:disabled { opacity: .6; cursor: default; }
+
+  .phrase {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .phrase:last-child { border-bottom: none; }
+  .phrase-body { flex: 1; min-width: 0; }
+  .phrase-main { font-size: 1.25rem; line-height: 1.35; font-weight: 600; }
+  .phrase-tr { font-style: italic; color: var(--muted); font-size: 0.85rem; margin-top: 3px; }
+  .phrase-tr-meaning {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: inline-block;
+  }
+  .phrase-tr-meaning b { color: var(--accent); font-weight: 600; margin-right: 4px; }
+
+  .play {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: var(--play);
+    color: #fff;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(14,107,140,.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .play:active { transform: scale(0.94); }
+  .play.speaking { background: #d9822b; animation: pulse 1s infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(217,130,43,.5); }
+    100% { box-shadow: 0 0 0 14px rgba(217,130,43,0); }
+  }
+
+  .notice {
+    margin-top: 14px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: center;
+    min-height: 1.2em;
+  }
+  .notice.warn {
+    background: var(--accent-soft);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+  .hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 22px;
+  }
+  .rtl { direction: rtl; text-align: right; }
+  .hidden { display: none; }
+  .gt-link { display: inline-block; margin-top: 8px; font-size: 0.85rem; color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Uluslararası Hasta Deneyimi Ekibi</h1>
+    <p>Dilinizi seçin · Select your language</p>
+  </header>
+
+  <div class="lang-grid" id="langGrid" role="group" aria-label="Dil seçimi"></div>
+
+  <section class="panel hidden" id="panel" aria-live="polite">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="flag" id="pFlag"></span>
+        <span id="pName"></span>
+      </div>
+      <button class="all-btn" id="allBtn">▶ Hepsini dinle</button>
+    </div>
+    <div id="phrases"></div>
+  </section>
+
+  <p class="notice" id="notice"></p>
+  <p class="hint" id="hint">Bir dil seçerek başlayın. Sesi dinlemek için ▶ tuşuna dokunun.</p>
+</div>
+
+<script>
+  const LANGS = [
+    { code: "en", voice: "en-US", name: "English", flag: "🇬🇧", rtl: false, phrases: [
+      { t: "Hello", tr: "Hello" },
+      { t: "How are you feeling?", tr: "How are you feeling?" },
+      { t: "Is everything alright?", tr: "Is everything alright?" },
+      { t: "Do you need anything?", tr: "Do you need anything?" },
+      { t: "Goodbye", tr: "Goodbye" }
+    ]},
+    { code: "de", voice: "de-DE", name: "Deutsch", flag: "🇩🇪", rtl: false, phrases: [
+      { t: "Guten Tag", tr: "Guten Tag" },
+      { t: "Wie fühlen Sie sich?", tr: "Wie fühlen Sie sich?" },
+      { t: "Ist alles in Ordnung?", tr: "Ist alles in Ordnung?" },
+      { t: "Brauchen Sie etwas?", tr: "Brauchen Sie etwas?" },
+      { t: "Auf Wiedersehen", tr: "Auf Wiedersehen" }
+    ]},
+    { code: "ar", voice: "ar-SA", name: "العربية", flag: "🇸🇦", rtl: true, phrases: [
+      { t: "مرحباً", tr: "Marhaban" },
+      { t: "كيف تشعر؟", tr: "Kayfa tash'ur?" },
+      { t: "هل كل شيء تمام؟", tr: "Hal kull shay' tamam?" },
+      { t: "هل تحتاج إلى شيء؟", tr: "Hal tahtaj ila shay'?" },
+      { t: "مع السلامة", tr: "Ma'a as-salama" }
+    ]},
+    { code: "ru", voice: "ru-RU", name: "Русский", flag: "🇷🇺", rtl: false, phrases: [
+      { t: "Здравствуйте", tr: "Zdravstvuyte" },
+      { t: "Как вы себя чувствуете?", tr: "Kak vy sebya chuvstvuyete?" },
+      { t: "Всё в порядке?", tr: "Vsyo v poryadke?" },
+      { t: "Вам что-нибудь нужно?", tr: "Vam chto-nibud' nuzhno?" },
+      { t: "До свидания", tr: "Do svidaniya" }
+    ]},
+    { code: "uk", voice: "uk-UA", name: "Українська", flag: "🇺🇦", rtl: false, phrases: [
+      { t: "Здрастуйте", tr: "Zdrastuyte" },
+      { t: "Як ви себе почуваєте?", tr: "Yak vy sebe pochuvayete?" },
+      { t: "Все добре?", tr: "Vse dobre?" },
+      { t: "Вам щось потрібно?", tr: "Vam shchos potribno?" },
+      { t: "До побачення", tr: "Do pobachennya" }
+    ]},
+    { code: "mk", voice: "mk-MK", name: "Македонски", flag: "🇲🇰", rtl: false, phrases: [
+      { t: "Добар ден", tr: "Dobar den" },
+      { t: "Како се чувствувате?", tr: "Kako se chuvstvuvate?" },
+      { t: "Сè е во ред?", tr: "Se e vo red?" },
+      { t: "Дали ви треба нешто?", tr: "Dali vi treba neshto?" },
+      { t: "Довидување", tr: "Doviduvanje" }
+    ]},
+    { code: "sh", voice: "sr-RS", name: "Sırp / Bosnak / Hırvat", flag: "🇷🇸", rtl: false, phrases: [
+      { t: "Dobar dan", tr: "Dobar dan" },
+      { t: "Kako se osjećate?", tr: "Kako se osjećate?" },
+      { t: "Je li sve u redu?", tr: "Je li sve u redu?" },
+      { t: "Treba li vam nešto?", tr: "Treba li vam nešto?" },
+      { t: "Doviđenja", tr: "Doviđenja" }
+    ]},
+    { code: "kk", voice: "kk-KZ", name: "Қазақша", flag: "🇰🇿", rtl: false, phrases: [
+      { t: "Сәлеметсіз бе", tr: "Sälemetsiz be" },
+      { t: "Өзіңізді қалай сезініп тұрсыз?", tr: "Özıñizdi qalay sezinip tursız?" },
+      { t: "Бәрі жақсы ма?", tr: "Bäri jaqsı ma?" },
+      { t: "Сізге бір нәрсе керек пе?", tr: "Sizge bir närse kerek pe?" },
+      { t: "Сау болыңыз", tr: "Sau bolıñız" }
+    ]},
+    { code: "uz", voice: "uz-UZ", name: "O‘zbekcha", flag: "🇺🇿", rtl: false, phrases: [
+      { t: "Assalomu alaykum", tr: "Assalomu alaykum" },
+      { t: "O‘zingizni qanday his qilyapsiz?", tr: "O‘zingizni qanday his qilyapsiz?" },
+      { t: "Hammasi joyidami?", tr: "Hammasi joyidami?" },
+      { t: "Sizga biror narsa kerakmi?", tr: "Sizga biror narsa kerakmi?" },
+      { t: "Xayr", tr: "Xayr" }
+    ]},
+    { code: "fr", voice: "fr-FR", name: "Français", flag: "🇫🇷", rtl: false, phrases: [
+      { t: "Bonjour", tr: "Bonjour" },
+      { t: "Comment vous sentez-vous ?", tr: "Comment vous sentez-vous ?" },
+      { t: "Tout va bien ?", tr: "Tout va bien ?" },
+      { t: "Vous avez besoin de quelque chose ?", tr: "Vous avez besoin de quelque chose ?" },
+      { t: "Au revoir", tr: "Au revoir" }
+    ]}
+  ];
+
+  // Türkçe anlamlar (sıra, her dilin ifadeleriyle eşleşir)
+  const TR_MEANINGS = [
+    "Merhaba",
+    "Nasıl hissediyorsunuz?",
+    "Her şey yolunda mı?",
+    "Bir şeye ihtiyacınız var mı?",
+    "Hoşça kalın"
+  ];
+
+  const grid = document.getElementById("langGrid");
+  const panel = document.getElementById("panel");
+  const phrasesEl = document.getElementById("phrases");
+  const notice = document.getElementById("notice");
+  const hint = document.getElementById("hint");
+  const allBtn = document.getElementById("allBtn");
+  let current = null;
+  let queue = null;
+  let playButtons = [];
+
+  function setNotice(msg, warn) {
+    notice.textContent = msg || "";
+    notice.classList.toggle("warn", !!warn);
+  }
+
+  function pickVoice(lang) {
+    const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    const prefix = lang.split("-")[0].toLowerCase();
+    return voices.find(v => v.lang.toLowerCase() === lang.toLowerCase())
+        || voices.find(v => v.lang.toLowerCase().startsWith(prefix))
+        || null;
+  }
+
+  function speak(text, lang, onEnd) {
+    if (!("speechSynthesis" in window)) {
+      setNotice("Bu cihaz sesli okumayı desteklemiyor. Ifadeyi yukarıdaki metinden okuyabilirsiniz.", true);
+      if (onEnd) onEnd();
+      return;
+    }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/\?/g, "").trim());
+    u.lang = lang;
+    u.rate = 0.85;
+    u.pitch = 1;
+    const voice = pickVoice(lang);
+    if (voice) {
+      u.voice = voice;
+    } else {
+      setNotice("Bu dil için telefonunuzda ses paketi yok. Lütfen ifadeyi yukarıdaki metinden okuyun ya da cihaz ayarlarından ses paketi indirin.", true);
+    }
+    u.onend = () => { if (onEnd) onEnd(); };
+    u.onerror = () => { if (onEnd) onEnd(); };
+    speechSynthesis.speak(u);
+  }
+
+  function setSpeakingState(btn, on) {
+    if (!btn) return;
+    btn.classList.toggle("speaking", on);
+    btn.textContent = on ? "■" : "▶";
+  }
+
+  function resetPlayButtons() {
+    playButtons.forEach(b => setSpeakingState(b, false));
+  }
+
+  function renderLanguage(lang) {
+    current = lang;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    queue = null;
+    allBtn.disabled = false;
+    allBtn.textContent = "▶ Hepsini dinle";
+    setNotice("");
+
+    document.querySelectorAll(".lang-btn").forEach(b => {
+      b.setAttribute("aria-pressed", b.dataset.code === lang.code ? "true" : "false");
+    });
+
+    document.getElementById("pFlag").textContent = lang.flag;
+    document.getElementById("pName").textContent = lang.name;
+
+    phrasesEl.innerHTML = "";
+    playButtons = [];
+    lang.phrases.forEach((p, i) => {
+      const row = document.createElement("div");
+      row.className = "phrase";
+
+      const body = document.createElement("div");
+      body.className = "phrase-body";
+
+      const main = document.createElement("div");
+      main.className = "phrase-main" + (lang.rtl ? " rtl" : "");
+      main.textContent = p.t;
+      if (lang.rtl) main.setAttribute("dir", "rtl");
+
+      const tr = document.createElement("div");
+      tr.className = "phrase-tr";
+      tr.textContent = p.tr;
+
+      const meaning = document.createElement("div");
+      meaning.className = "phrase-tr-meaning";
+      const b = document.createElement("b");
+      b.textContent = "Türkçe:";
+      meaning.appendChild(b);
+      meaning.appendChild(document.createTextNode(" " + TR_MEANINGS[i]));
+
+      body.appendChild(main);
+      body.appendChild(tr);
+      body.appendChild(meaning);
+
+      const btn = document.createElement("button");
+      btn.className = "play";
+      btn.textContent = "▶";
+      btn.setAttribute("aria-label", "Dinle: " + p.t);
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("speaking")) {
+          speechSynthesis.cancel();
+          queue = null;
+          resetPlayButtons();
+          return;
+        }
+        queue = null;
+        resetPlayButtons();
+        setSpeakingState(btn, true);
+        speak(p.t, lang.voice, () => setSpeakingState(btn, false));
+      });
+      playButtons.push(btn);
+
+      // Bağlantı hedef dili Türkçe olan bir Google Çeviri sayfası açar
+      const gt = document.createElement("a");
+      gt.href = "https://translate.google.com/?sl=" + lang.code + "&tl=tr&text=" + encodeURIComponent(p.t) + "&op=translate";
+      gt.target = "_blank";
+      gt.rel = "noopener";
+      gt.className = "gt-link";
+      gt.textContent = "\uD83C\uDF10 Google Çeviri'de çevir";
+      body.appendChild(gt);
+
+      row.appendChild(body);
+      row.appendChild(btn);
+      phrasesEl.appendChild(row);
+    });
+
+    panel.classList.remove("hidden");
+    hint.classList.add("hidden");
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function playAll() {
+    if (!current) return;
+    if (queue) {
+      speechSynthesis.cancel();
+      queue = null;
+      resetPlayButtons();
+      allBtn.textContent = "▶ Hepsini dinle";
+      return;
+    }
+    const lang = current;
+    let i = 0;
+    queue = true;
+    allBtn.textContent = "■ Durdur";
+    const next = () => {
+      if (!queue) return;
+      resetPlayButtons();
+      if (i >= lang.phrases.length) {
+        queue = null;
+        allBtn.textContent = "▶ Hepsini dinle";
+        return;
+      }
+      const idx = i++;
+      setSpeakingState(playButtons[idx], true);
+      speak(lang.phrases[idx].t, lang.voice, () => {
+        setSpeakingState(playButtons[idx], false);
+        setTimeout(next, 600);
+      });
+    };
+    next();
+  }
+
+  LANGS.forEach(lang => {
+    const b = document.createElement("button");
+    b.className = "lang-btn";
+    b.dataset.code = lang.code;
+    b.setAttribute("aria-pressed", "false");
+    const f = document.createElement("span");
+    f.className = "flag";
+    f.textContent = lang.flag;
+    const n = document.createElement("span");
+    n.className = "lname";
+    n.textContent = lang.name;
+    b.appendChild(f);
+    b.appendChild(n);
+    b.addEventListener("click", () => {
+      try { renderLanguage(lang); }
+      catch (err) { setNotice("Bir hata oluştu, lütfen sayfayı yenileyin.", true); console.error(err); }
+    });
+    grid.appendChild(b);
+  });
+
+  allBtn.addEventListener("click", playAll);
+
+  // Bazı tarayıcılarda ses listesi geç yüklenir
+  if ("speechSynthesis" in window) {
+    speechSynthesis.onvoiceschanged = () => {};
+    speechSynthesis.getVoices();
+  }
+</script>
+</body>
+</html>
