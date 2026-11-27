@@ -40,6 +40,17 @@
     min-height: 100vh;
   }
 
+  /* Arka plan görseli (şeffaflık %65 → opaklık %35) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url("arka-plan.jpg") center / cover no-repeat;
+    opacity: 0.35;
+    z-index: -1;
+    pointer-events: none;
+  }
+
   /* Ana sayfa */
   .home { max-width: 900px; margin: 0 auto; padding: 36px 18px 60px; }
   .home header { text-align: center; margin-bottom: 28px; }
@@ -63,10 +74,10 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
   }
-  .card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 6px 18px rgba(14,107,140,.12); }
+  .card:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 6px 18px rgba(14,107,140,.15); }
   .card:active { transform: scale(0.98); }
   .card .icon { font-size: 1.8rem; line-height: 1; }
   .card h2 { font-size: 1.05rem; color: var(--accent); margin: 0; }
@@ -125,7 +136,6 @@
   .modal-body p { margin: 0 0 12px; }
   .modal-body ul { padding-left: 20px; margin: 0; }
   .modal-body li { margin-bottom: 8px; }
-  .placeholder { color: var(--muted); font-style: italic; }
 
   /* Çeviri programı */
   .intro-tr { color: var(--muted); font-size: 0.95rem; margin: 0 0 14px; }
@@ -454,8 +464,8 @@
   const closeBtn = document.getElementById("closeBtn");
   let lastFocus = null;
 
-  // ----- Çeviri programı durumu (açık pencere içindeki öğelere bağlı) -----
-  let ui = null;   // { grid, panel, pFlag, pName, phrases, allBtn, notice, hint }
+  // ----- Çeviri programı durumu -----
+  let ui = null;
   let current = null;
   let queue = null;
   let playButtons = [];
